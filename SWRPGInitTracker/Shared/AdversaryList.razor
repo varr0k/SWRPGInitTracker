@@ -1,0 +1,63 @@
+﻿@using SWRPGInitTracker.Models
+
+@if (Adversaries != null && Adversaries.Any())
+{
+    <ul class="list-group">
+        @foreach (Adversary adversary in Adversaries.Take(20))
+        {
+            <li class="list-group-item p-0">
+                <div class="d-flex w-100 justify-content-between border-bottom border-2 bg-danger text-white">
+                    <h5 class="mb-1 p-2 fw-bolder align-self-center">@adversary.Name</h5>
+                    <div class="d-flex p-2">
+                    @switch (adversary.Type.ToLowerInvariant())
+                    {
+                        case "nemesis":
+                            <span class="align-self-center"><span class="swicon despair text-white"></span>@adversary.Type.ToUpperInvariant()</span>
+                            break;
+                        case "rival":
+                            <span class="align-self-center"><span class="swicon threat text-white"></span>@adversary.Type.ToUpperInvariant()</span>
+                            break;
+                        case "minion":
+                            <span class="align-self-center"><span class="swicon failure text-white"></span>@adversary.Type.ToUpperInvariant()</span>
+                            break;
+                    }
+                    </div>
+                </div>
+                <div class="d-flex w-100 justify-content-between px-4 py-1">
+                    <CharacteristicBox Name="Brawn" Value="@adversary.Characteristics.Brawn"></CharacteristicBox>
+                    <CharacteristicBox Name="Agility" Value="@adversary.Characteristics.Agility"></CharacteristicBox>
+                    <CharacteristicBox Name="Intellect" Value="@adversary.Characteristics.Intellect"></CharacteristicBox>
+                </div>
+                <div class="d-flex w-100 justify-content-between px-4 pt-1 pb-2 mb-1 border-bottom">
+                    <CharacteristicBox Name="Cunning" Value="@adversary.Characteristics.Cunning"></CharacteristicBox>
+                    <CharacteristicBox Name="Willpower" Value="@adversary.Characteristics.Willpower"></CharacteristicBox>
+                    <CharacteristicBox Name="Presence" Value="@adversary.Characteristics.Presence"></CharacteristicBox>
+                </div>
+                <div class="d-flex w-100 justify-content-center pt-2 px-4">
+                    <DerivedBox Name="Wounds" Content1="@adversary.Derived.Wounds.ToString()"></DerivedBox>
+                    @if (adversary.Derived.Strain.HasValue)
+                    {
+                        <DerivedBox Name="Strain" Content1="@adversary.Derived.Strain.ToString()"></DerivedBox>
+                    }
+                    else
+                    {
+                    }
+                    <DerivedBox Name="Soak" Content1="@adversary.Derived.Soak.ToString()"></DerivedBox>
+                    <DerivedBox Name="M/R Def." Content1="@adversary.Derived.MeleeDefence.ToString()" Content2="@adversary.Derived.RangedDefence.ToString()"></DerivedBox>
+
+                </div>
+                <small class="text-secondary text-center font-monospace">@adversary.Id</small>
+            </li>
+        }
+    </ul>
+}
+
+@code {
+    [Parameter]
+    public List<Adversary> Adversaries { get; set; }
+
+    public void Refresh()
+    {
+        StateHasChanged();
+    }
+}

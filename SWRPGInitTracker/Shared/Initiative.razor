@@ -1,0 +1,152 @@
+﻿<div class="d-flex align-items-center">
+    <div class="flex-grow-1">
+        <h2>Initiative</h2>
+    </div>
+    <div>
+        <button type="button" class="btn btn-danger" @onclick="ClearSlots"><i class="bi bi-trash"></i> Clear</button>
+    </div>
+</div>
+<ul class="list-group">
+    @if (slots.Any())
+    {
+        @foreach (var slot in slots.ToArray())
+        {
+            @if (slot.IsPlayer)
+            {
+                <li class="list-group-item list-group-item-success d-flex">
+                    <div class="p-1 flex-grow-1 align-self-center">
+                        <h4 class="m-0">Player (@slot.Successes<span class="swicon success text-success"></span>/@slot.Advantages<span class="swicon advantage text-success"></span>)</h4>
+                    </div>
+                    <div class="p-1 align-self-center">
+                        <button type="button" class="btn btn-secondary" @onclick="@(e => RemoveSlot(slot.Id))"><i class="bi bi-x-lg"></i></button>
+                    </div>
+                </li>
+            }
+            else
+            {
+                <li class="list-group-item d-flex">
+                    <div class="p-1 flex-grow-1 align-self-center">
+                        <h4 class="m-0">NPC (@slot.Successes<span class="swicon success"></span>/@slot.Advantages<span class="swicon advantage"></span>)</h4>
+                    </div>
+                    <div class="p-1">
+                        <button type="button" class="btn btn-secondary" @onclick="@(e => RemoveSlot(slot.Id))"><i class="bi bi-x-lg"></i></button>
+                    </div>
+                </li>
+            }
+        }
+    }
+    <li class="list-group-item align-items-center d-flex">
+        <div class="p-1 flex-grow-1 d-flex">
+            <div class="px-1">
+                <label class="visually-hidden" for="successes">Successes</label>
+                <div class="input-group">
+                    <div class="input-group-text">
+                        <span class="swicon success"></span>
+                    </div>
+                    <input type="number" class="form-control" id="successes" @bind-value="successes" />
+                </div>
+            </div>
+            <div class="px-1">
+                <label class="visually-hidden" for="advantages">Advantages</label>
+                <div class="input-group">
+                    <div class="input-group-text">
+                        <span class="swicon advantage"></span>
+                    </div>
+                    <input type="number" class="form-control" id="advantages" @bind-value="advantages" />
+                </div>
+            </div>
+            <div class="px-1 align-self-center">
+                <input type="checkbox" class="form-check-input" id="isPlayer" @bind-value="isPlayer" />
+                <label for="isPlayer" class="form-check-label">Is Player</label>
+            </div>
+        </div>
+        <div class="p-1">
+            <button type="button" class="btn btn-primary" @onclick="AddSlot"><i class="bi bi-plus-lg"></i></button>
+        </div>
+
+    </li>
+</ul>
+
+<span class="text-danger">@errorMessage</span>
+
+@code {
+    private List<InitiativeSlot> slots;
+    private int successes;
+    private int advantages;
+    private bool isPlayer;
+    private string errorMessage;
+
+    protected override async Task OnInitializedAsync()
+    {
+        slots = new();
+        successes = 0;
+        advantages = 0;
+        isPlayer = false;
+    }
+
+    private void AddSlot()
+    {
+        if (successes < 0 || advantages < 0)
+        {
+            errorMessage = "Successes and Advantages cannot be negative!";
+        }
+        else
+        {
+            errorMessage = String.Empty;
+            var slot = new InitiativeSlot
+                {
+                    Successes = successes,
+                    Advantages = advantages,
+                    IsPlayer = isPlayer
+                };
+
+            slots = slots.Append(slot).OrderBy(x => x).ToList();
+        }
+    }
+
+    private void RemoveSlot(Guid id)
+    {
+        slots.RemoveAll(x => x.Id == id);
+    }
+
+    private void ClearSlots()
+    {
+        slots.Clear();
+    }
+
+    private class InitiativeSlot : IComparable
+    {
+        public Guid Id { get; set; }
+        public int Successes { get; set; }
+        public int Advantages { get; set; }
+        public bool IsPlayer { get; set; }
+
+        public InitiativeSlot()
+        {
+            Id = Guid.NewGuid();
+        }
+
+        public int CompareTo(object obj)
+        {
+            if (obj == null) return 1;
+
+            InitiativeSlot other = obj as InitiativeSlot;
+            if (other != null)
+            {
+                int compareSuccess = -1 * this.Successes.CompareTo(other.Successes);
+                if (compareSuccess == 0)
+                {
+                    int compareAdvantage = -1 * this.Advantages.CompareTo(other.Advantages);
+                    if (compareAdvantage == 0)
+                    {
+                        return -1 * this.IsPlayer.CompareTo(other.IsPlayer);
+                    }
+                    else return compareAdvantage;
+                }
+                else return compareSuccess;
+            }
+            else return 1;
+        }
+    }
+
+}

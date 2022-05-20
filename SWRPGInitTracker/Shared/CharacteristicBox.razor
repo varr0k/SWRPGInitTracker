@@ -1,0 +1,12 @@
+﻿<div class="small-characteristics w-25 d-flex-column">
+    <div class="small-characteristics-value text-center">@Value</div>
+    <div class="small-characteristics-name text-center bg-danger text-white fw-bolder">@Name.ToUpperInvariant()</div>
+</div>
+
+@code {
+    [Parameter]
+    public string Name { get; set; }
+
+    [Parameter]
+    public int Value { get; set; }
+}

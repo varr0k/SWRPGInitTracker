@@ -1,0 +1,192 @@
+﻿@page "/"
+@inject HttpClient Http
+@using System.Text.Json
+@using SWRPGInitTracker.Models
+
+@if (adversaries == null)
+{
+    <p>Loading...</p>
+}
+else
+{
+
+    <div class="modal @ModalClass" id="sourcesModal" tabindex="-1" aria-labelledby="sourcesModalLabel" aria-hidden="true" style="display:@ModalDisplay">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="sourcesModalLabel">Select sources</h5>
+                </div>
+                <div class="modal-body">
+                    @*@for (int i=0; i<sources.Count; i++)
+                {
+                // see https://stackoverflow.com/a/56426146/323447
+                var iCopy = i;
+
+                <div class="form-check">
+                <input class="form-check-input" type="checkbox" id="check-source-@i" @onchange="@(e => sources[iCopy] = e.Value as Boolean)">
+                <label class="form-check-label" for="check-source-@i">
+                @sources[i].Name
+                </label>
+                </div>
+                }*@
+                    <EditForm Model="sources" OnSubmit="UpdateData">
+                        <DataAnnotationsValidator />
+                        @foreach (var source in sources)
+                        {
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" id="check-@source.Id" @bind="source.Selected">
+                                <label class="form-check-label" for="check-@source.Id">
+                                    @source.Name
+                                </label>
+                            </div>
+                        }
+                        <button type="button" class="btn btn-secondary" @onclick="ToggleSettings">Close</button>
+                        <button type="submit" class="btn btn-primary" @onclick="ToggleSettings">Save changes</button>
+                    </EditForm>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    @if (ShowBackdrop)
+    {
+        <div class="modal-backdrop fade show"></div>
+    }
+
+    <div class="row">
+        <div class="col-lg-6 col-xl-8 col-xxl-8 pb-4">
+            <Initiative></Initiative>
+        </div>
+        <div class="col-lg-6 col-xl-4 col-xxl-4">
+            <div class="d-flex align-items-center">
+                <div class="flex-grow-1">
+                    <h2>Adversaries</h2>
+                </div>
+                <div>
+                    <button type="button" class="btn btn-secondary" @onclick="ToggleSettings"><i class="bi bi-gear-wide-connected"></i> Sources</button>
+                </div>
+            </div>
+            @if (filtered > 20)
+            {
+                <small>Showing top 20 of @filtered (@loaded loaded)</small>
+            }
+            else
+            {
+                <small>Showing @filtered of @loaded loaded</small>
+            }
+            <div class="input-group mb-2">
+                <span class="input-group-text" id="searchInputAddon"><i class="bi bi-search"></i></span>
+                <input type="text" class="form-control" id="searchInput" placeholder="Filter Adversaries..." aria-label="Filter Adversaries" aria-labelledby="searchInputAddon" @bind-value="inputVal" @onkeyup="FilterList" />
+            </div>
+            
+            <AdversaryList Adversaries="filteredList" @ref="_adversaryList"></AdversaryList>
+        </div>
+    </div>
+
+
+
+
+}
+
+@if (!String.IsNullOrEmpty(exception))
+{
+    <pre class="text-danger">@exception</pre>
+}
+
+@code {
+    private string content;
+    private List<Adversary> adversaries;
+    private List<Adversary> filteredList;
+    private List<Source> sources;
+    private string exception = String.Empty;
+    private string inputVal = String.Empty;
+    private int loaded;
+    private int filtered;
+
+    public string ModalDisplay = "none;";
+    public string ModalClass = "";
+    public bool ShowBackdrop = false;
+
+
+
+    private AdversaryList _adversaryList;
+
+    protected override async Task OnInitializedAsync()
+    {
+        adversaries = new();
+        sources = Sources.GetList();
+
+        await UpdateData();
+    }
+
+    private async Task UpdateData()
+    {
+        adversaries.Clear();
+        foreach (var source in sources.Where(x => x.Selected).ToList())
+        {
+            await Import(source.Url);
+        }
+        adversaries = adversaries.OrderBy(x => x.Name).ToList();
+        loaded = adversaries.Count;
+        FilterList();
+    }
+
+    private async Task Import(string url)
+    {
+        content = await Http.GetStringAsync(url);
+        if (!String.IsNullOrEmpty(content))
+        {
+            try
+            {
+                var options = new JsonSerializerOptions
+                    {
+                        PropertyNameCaseInsensitive = true,
+                    };
+                var importList = JsonSerializer.Deserialize<List<Adversary>>(content);
+                if (importList != null && importList.Any())
+                {
+                    adversaries.AddRange(importList);
+                }
+            }
+            catch (Exception ex)
+            {
+                exception = ex.Message;
+            }
+        }
+    }
+
+    private void FilterList()
+    {
+        if (String.IsNullOrEmpty(inputVal))
+        {
+            filteredList = adversaries;
+        }
+        else
+        {
+            filteredList = adversaries.Where(x => x.Name.Contains(inputVal, StringComparison.OrdinalIgnoreCase)).ToList();
+
+        }
+        filtered = filteredList.Count;
+    }
+
+
+
+    private void ToggleSettings()
+    {
+        if (ModalDisplay == "none;")
+        {
+            ModalDisplay = "block;";
+            ModalClass = "Show";
+            ShowBackdrop = true;
+            StateHasChanged();
+        }
+        else
+        {
+            ModalDisplay = "none;";
+            ModalClass = "";
+            ShowBackdrop = false;
+            StateHasChanged();
+        }
+    }
+
+}

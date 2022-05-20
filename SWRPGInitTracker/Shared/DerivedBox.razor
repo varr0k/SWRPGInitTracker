@@ -1,0 +1,25 @@
+﻿<div class="small-characteristics w-25 d-flex-column mx-1">
+    <div class="small-characteristics-name text-center bg-danger text-white fw-bolder">@Name.ToUpperInvariant()</div>
+    @if (String.IsNullOrEmpty(Content2))
+    {
+        <div class="small-characteristics-value text-center">@Content1</div> 
+    }
+    else
+    {
+       <div class="small-characteristics-value d-flex w-100 justify-content-evenly text-center">
+           <div>@Content1</div>
+           <div class="small-characteristics-vertical"></div>
+           <div>@Content2</div>
+       </div> 
+    }
+</div>
+
+@code {
+    [Parameter]
+    public string Name { get; set; }
+    [Parameter]
+    public string Content1 { get; set; }
+    [Parameter]
+    public string Content2 { get; set; }
+
+}
