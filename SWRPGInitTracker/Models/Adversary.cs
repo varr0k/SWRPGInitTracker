@@ -1,4 +1,5 @@
-﻿using System.Text.Json.Serialization;
+﻿using SWRPGInitTracker.Json;
+using System.Text.Json.Serialization;
 
 namespace SWRPGInitTracker.Models
 {
@@ -19,26 +20,26 @@ namespace SWRPGInitTracker.Models
         public Derived Derived { get; set; }
 
         [JsonPropertyName("skills")]
-        public object Skills { get; set; }
+        [JsonConverter(typeof(SkillConverter))]
+        public List<Skill> Skills { get; set; }
 
-        //[JsonPropertyName("weapons")]
-        [JsonIgnore]
-        public List<object> Weapons { get; set; }
+        [JsonPropertyName("weapons")]
+        [JsonConverter(typeof(WeaponConverter))]
+        public List<Weapon> Weapons { get; set; }
 
-        //[JsonPropertyName("gear")]
-        [JsonIgnore]
-        public List<string> Gear { get; set; }
+        [JsonPropertyName("gear")]
+        [JsonConverter(typeof(GearConverter))]
+        public List<Gear> Gear { get; set; }
 
         [JsonPropertyName("tags")]
         public List<string> Tags { get; set; }
 
-        //[JsonPropertyName("talents")]
-        [JsonIgnore]
+        [JsonPropertyName("talents")]
         public List<string> Talents { get; set; }
 
-        //[JsonPropertyName("abilities")]
-        [JsonIgnore]
-        public List<string> Abilities { get; set; }
+        [JsonPropertyName("abilities")]
+        [JsonConverter(typeof(AbilityConverter))]
+        public List<Ability> Abilities { get; set; }
 
         [JsonPropertyName("description")]
         public string Description { get; set; }
@@ -50,6 +51,40 @@ namespace SWRPGInitTracker.Models
         {
             Id = Guid.NewGuid();
         }
+
+        public string SkillString()
+        {
+            var skillStrs = Skills
+                .Select(s => s.Ranks.HasValue ? $"{s.Name} {s.Ranks}" : $"{s.Name}")
+                .ToList();
+            return string.Join(", ", skillStrs);
+        }
+
+        public string AbilityString()
+        {
+            var abilityStrs = Abilities
+                .Select(s => s.Name)
+                .ToList();
+            return string.Join(", ", abilityStrs);
+        }
+
+        public string WeaponString()
+        {
+            var weaponStrs = Weapons
+                .Select(w => w.Name)
+                .ToList();
+            return string.Join(", ", weaponStrs);
+        }
+
+        public string GearString()
+        {
+            var gearStrs = Gear
+                .Select(w => w.Name)
+                .ToList();
+            return string.Join(", ", gearStrs);
+        }
+
+        public string TalentString() => string.Join(", ", Talents);
 
         public override string ToString()
         {
