@@ -1,4 +1,5 @@
 ﻿@using SWRPGInitTracker.Models
+@using SWRPGInitTracker.Helpers
 
 @if (Adversaries != null && Adversaries.Any())
 {
@@ -9,18 +10,18 @@
                 <div class="d-flex w-100 justify-content-between border-bottom border-2 bg-danger text-white">
                     <h5 class="mb-1 p-2 fw-bolder align-self-center">@adversary.Name</h5>
                     <div class="d-flex p-2">
-                    @switch (adversary.Type.ToLowerInvariant())
-                    {
-                        case "nemesis":
-                            <span class="align-self-center"><span class="swicon despair text-white"></span>@adversary.Type.ToUpperInvariant()</span>
-                            break;
-                        case "rival":
-                            <span class="align-self-center"><span class="swicon threat text-white"></span>@adversary.Type.ToUpperInvariant()</span>
-                            break;
-                        case "minion":
-                            <span class="align-self-center"><span class="swicon failure text-white"></span>@adversary.Type.ToUpperInvariant()</span>
-                            break;
-                    }
+                        @switch (adversary.Type.ToLowerInvariant())
+                        {
+                            case "nemesis":
+                                <span class="align-self-center"><span class="swicon despair text-white"></span>@adversary.Type.ToUpperInvariant()</span>
+                                break;
+                            case "rival":
+                                <span class="align-self-center"><span class="swicon threat text-white"></span>@adversary.Type.ToUpperInvariant()</span>
+                                break;
+                            case "minion":
+                                <span class="align-self-center"><span class="swicon failure text-white"></span>@adversary.Type.ToUpperInvariant()</span>
+                                break;
+                        }
                     </div>
                 </div>
                 <div class="d-flex w-100 justify-content-between px-4 py-1">
@@ -45,6 +46,55 @@
                     <DerivedBox Name="Soak" Content1="@adversary.Derived.Soak.ToString()"></DerivedBox>
                     <DerivedBox Name="M/R Def." Content1="@adversary.Derived.MeleeDefence.ToString()" Content2="@adversary.Derived.RangedDefence.ToString()"></DerivedBox>
 
+                </div>
+                <div class="d-flex flex-column pt-2 px-4">
+                    @if (adversary.Skills != null && adversary.Skills.Any())
+                    {
+                        <div>
+                            @if (@adversary.Type.ToLowerInvariant() == "minion")
+                            {
+                                <b>Skills (group only): </b>
+
+                                @adversary.SkillString()
+                            }
+                            else
+                            {
+                                <b>Skills: </b>
+
+                                @adversary.SkillString()
+                            }
+                        </div>
+                    }
+                    @if (adversary.Talents != null && adversary.Talents.Any())
+                    {
+                        <div>
+                            <b>Talents: </b>@((MarkupString)DiceSymbolHelper.Format(adversary.TalentString()))
+                        </div>
+                    }
+                    @if (adversary.Abilities != null && adversary.Abilities.Any())
+                    {
+                        <div>
+                            <b>Abilities: </b>@((MarkupString)DiceSymbolHelper.Format(adversary.AbilityString()))
+                        </div>
+                    }
+                    @if (adversary.Weapons != null && adversary.Weapons.Any())
+                    {
+                        <div>
+                            <b>Weapons: </b>@((MarkupString)DiceSymbolHelper.Format(adversary.WeaponString()))
+                        </div>
+                    }
+                    @if (adversary.Gear != null && adversary.Gear.Any())
+                    {
+                        <div>
+                            <b>Gear: </b>@((MarkupString)DiceSymbolHelper.Format(adversary.GearString()))
+                        </div>
+                    }
+                    @if (!String.IsNullOrEmpty(adversary.Notes))
+                    {
+                        <div>
+                            <small><b>Notes: </b>@((MarkupString)DiceSymbolHelper.Format(adversary.Notes))</small>
+                        </div>
+                    }
                 </div>
                 <small class="text-secondary text-center font-monospace">@adversary.Id</small>
             </li>
