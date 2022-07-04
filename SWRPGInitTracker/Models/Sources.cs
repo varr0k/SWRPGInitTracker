@@ -3,7 +3,7 @@
     public static class Sources
     {
 
-        public static List<Source> GetList() =>
+        public static List<Source> GetAdversaryList() =>
             new List<Source>
             {
                 //Add adversary sources
@@ -13,6 +13,12 @@
                 new Source("Creatures", "/data/adversaries/creatures.json", true),
                 new Source("Droids", "/data/adversaries/droids.json", true),
                 new Source("Rebel Alliance", "/data/adversaries/rebel-alliance.json", true),
+            };
+
+        public static List<Source> GetCritsList() =>
+            new List<Source>
+            {
+                new Source("crits", "/data/crits.json", true)
             };
     }
 

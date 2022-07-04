@@ -19,20 +19,20 @@ else
                 </div>
                 <div class="modal-body">
                     @*@for (int i=0; i<sources.Count; i++)
-                {
-                // see https://stackoverflow.com/a/56426146/323447
-                var iCopy = i;
+                        {
+                        // see https://stackoverflow.com/a/56426146/323447
+                        var iCopy = i;
 
-                <div class="form-check">
-                <input class="form-check-input" type="checkbox" id="check-source-@i" @onchange="@(e => sources[iCopy] = e.Value as Boolean)">
-                <label class="form-check-label" for="check-source-@i">
-                @sources[i].Name
-                </label>
-                </div>
-                }*@
-                    <EditForm Model="sources" OnSubmit="UpdateData">
+                        <div class="form-check">
+                        <input class="form-check-input" type="checkbox" id="check-source-@i" @onchange="@(e => sources[iCopy] = e.Value as Boolean)">
+                        <label class="form-check-label" for="check-source-@i">
+                        @sources[i].Name
+                        </label>
+                        </div>
+                        }*@
+                    <EditForm Model="adversarySources" OnSubmit="UpdateData">
                         <DataAnnotationsValidator />
-                        @foreach (var source in sources)
+                        @foreach (var source in adversarySources)
                         {
                             <div class="form-check">
                                 <input class="form-check-input" type="checkbox" id="check-@source.Id" @bind="source.Selected">
@@ -55,11 +55,24 @@ else
     }
 
     <div class="row">
-        <div class="col-lg-6 col-xl-8 col-xxl-8 pb-4">
+        <div class="col-lg-6 col-xl-6 col-xxl-6 pb-4">
             <Initiative></Initiative>
         </div>
-        <div class="col-lg-6 col-xl-4 col-xxl-4">
-            <div class="d-flex align-items-center">
+        <div class="col-lg-6 col-xl-6 col-xxl-6">
+            <ul class="nav nav-pills nav-fill mb-3" id="pills-tab" role="tablist">
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link active" id="pills-adversary-tab" data-bs-toggle="pill" data-bs-target="#pills-adversary" type="button" role="tab" aria-controls="pills-adversary" aria-selected="true">Adversaries</button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link" id="pills-crits-tab" data-bs-toggle="pill" data-bs-target="#pills-crits" type="button" role="tab" aria-controls="pills-crits" aria-selected="false">Critical Hits</button>
+                </li>
+                @*<li class="nav-item" role="presentation">
+                    <button class="nav-link" id="pills-contact-tab" data-bs-toggle="pill" data-bs-target="#pills-contact" type="button" role="tab" aria-controls="pills-contact" aria-selected="false">Contact</button>
+                </li>*@
+            </ul>
+            <div class="tab-content" id="pills-tabContent">
+                <div class="tab-pane fade show active" id="pills-adversary" role="tabpanel" aria-labelledby="pills-adversary-tab">
+                    <div class="d-flex align-items-center">
                 <div class="flex-grow-1">
                     <h2>Adversaries</h2>
                 </div>
@@ -77,10 +90,19 @@ else
             }
             <div class="input-group mb-2">
                 <span class="input-group-text" id="searchInputAddon"><i class="bi bi-search"></i></span>
-                <input type="text" class="form-control" id="searchInput" placeholder="Filter Adversaries..." aria-label="Filter Adversaries" aria-labelledby="searchInputAddon" @bind-value="inputVal" @onkeyup="FilterList" />
+                <input type="text" class="form-control" id="searchInput" placeholder="Filter Adversaries..." aria-label="Filter Adversaries" aria-labelledby="searchInputAddon" @bind-value="inputVal" @onkeyup="FilterAdversaryList" />
             </div>
-            
+
             <AdversaryList Adversaries="filteredList" @ref="_adversaryList"></AdversaryList>
+                </div>
+                <div class="tab-pane fade" id="pills-crits" role="tabpanel" aria-labelledby="pills-crits-tab">
+                    <h2>Critical Hits</h2>
+                    <CritList Crits="crits" @ref="_critList"></CritList>
+                </div>
+                @*<div class="tab-pane fade" id="pills-contact" role="tabpanel" aria-labelledby="pills-contact-tab">...</div>*@
+            </div>
+
+            
         </div>
     </div>
 
@@ -96,9 +118,11 @@ else
 
 @code {
     private string content;
+    private List<Crit> crits;
     private List<Adversary> adversaries;
     private List<Adversary> filteredList;
-    private List<Source> sources;
+    private List<Source> adversarySources;
+    private List<Source> critSources;
     private string exception = String.Empty;
     private string inputVal = String.Empty;
     private int loaded;
@@ -111,11 +135,15 @@ else
 
 
     private AdversaryList _adversaryList;
+    private CritList _critList;
 
     protected override async Task OnInitializedAsync()
     {
         adversaries = new();
-        sources = Sources.GetList();
+        adversarySources = Sources.GetAdversaryList();
+
+        crits = new();
+        critSources = Sources.GetCritsList();
 
         await UpdateData();
     }
@@ -123,16 +151,22 @@ else
     private async Task UpdateData()
     {
         adversaries.Clear();
-        foreach (var source in sources.Where(x => x.Selected).ToList())
+        foreach (var source in adversarySources.Where(x => x.Selected).ToList())
         {
-            await Import(source.Url);
+            await ImportAdversary(source.Url);
         }
         adversaries = adversaries.OrderBy(x => x.Name).ToList();
         loaded = adversaries.Count;
-        FilterList();
+        FilterAdversaryList();
+
+        crits.Clear();
+        foreach (var source in critSources.Where(x => x.Selected).ToList())
+        {
+            await ImportCrit(source.Url);
+        }
     }
 
-    private async Task Import(string url)
+    private async Task ImportAdversary(string url)
     {
         content = await Http.GetStringAsync(url);
         if (!String.IsNullOrEmpty(content))
@@ -156,7 +190,31 @@ else
         }
     }
 
-    private void FilterList()
+    private async Task ImportCrit(string url)
+    {
+        content = await Http.GetStringAsync(url);
+        if (!String.IsNullOrEmpty(content))
+        {
+            try
+            {
+                var options = new JsonSerializerOptions
+                    {
+                        PropertyNameCaseInsensitive = true,
+                    };
+                var importList = JsonSerializer.Deserialize<List<Crit>>(content);
+                if (importList != null && importList.Any())
+                {
+                    crits.AddRange(importList);
+                }
+            }
+            catch (Exception ex)
+            {
+                exception = ex.Message;
+            }
+        }
+    }
+
+    private void FilterAdversaryList()
     {
         if (String.IsNullOrEmpty(inputVal))
         {
@@ -169,8 +227,6 @@ else
         }
         filtered = filteredList.Count;
     }
-
-
 
     private void ToggleSettings()
     {

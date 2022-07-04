@@ -23,6 +23,10 @@ a, .btn-link {
     color: #0071c1;
 }
 
+.cell-nowrap {
+    white-space: nowrap;
+}
+
 .btn-primary {
     color: #fff;
     background-color: #1b6ec2;
@@ -158,13 +162,6 @@ a, .btn-link {
 
 
 }
-
-
-
-
-
-
-
 
 .ability {
     color: #52b849
