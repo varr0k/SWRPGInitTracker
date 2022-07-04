@@ -1,0 +1,61 @@
+﻿@using SWRPGInitTracker.Models
+@using SWRPGInitTracker.Helpers
+
+@if (Crits != null && Crits.Any())
+{
+    <div class="table-responsive">
+        <table class="table table-hover table-sm align-middle">
+            <thead>
+                <tr>
+                    <th scope="col">Roll</th>
+                    <th scope="col">Severity</th>
+                    <th scope="col">Result</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (Crit crit in Crits)
+                {
+                    <tr>
+                        <th class="cell-nowrap">
+                            @crit.Roll
+                        </th>
+                        <td class="cell-nowrap">
+                            @switch (crit.Severity)
+                            {
+                                case 0:
+                                    <span class="align-self-center">--</span>
+                                    break;
+                                case 1:
+                                    <span class="align-self-center fw-bold">Easy (<span class="swicon difficulty"></span>)</span>
+                                    break;
+                                case 2:
+                                    <span class="align-self-center fw-bold">Average (<span class="swicon difficulty"></span><span class="swicon difficulty"></span>)</span>
+                                    break;
+                                case 3:
+                                    <span class="align-self-center fw-bold">Hard (<span class="swicon difficulty"></span><span class="swicon difficulty"></span><span class="swicon difficulty"></span>)</span>
+                                    break;
+                                case 4:
+                                    <span class="align-self-center fw-bold">Daunting (<span class="swicon difficulty"></span><span class="swicon difficulty"></span><span class="swicon difficulty"></span><span class="swicon difficulty"></span>)</span>
+                                    break;
+                            }
+                        </td>
+                        <td>
+                            <b>@crit.Name - </b>@((MarkupString)DiceSymbolHelper.Format(crit.Effect))
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+}
+
+@code {
+    [Parameter]
+    public List<Crit> Crits { get; set; }
+
+
+    public void Refresh()
+    {
+        StateHasChanged();
+    }
+}
