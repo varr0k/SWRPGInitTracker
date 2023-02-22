@@ -1,0 +1,154 @@
+﻿<div class="d-flex align-items-center">
+    <div class="flex-grow-1">
+        <h2>Wounds & Strain</h2>
+    </div>
+    <div>
+        <button type="button" class="btn btn-danger" @onclick="ClearSlots"><i class="bi bi-trash"></i> Clear</button>
+    </div>
+</div>
+<ul class="list-group">
+    @if (slots.Any())
+    {
+        @foreach (var slot in slots.ToArray())
+        {
+            <li class="list-group-item d-flex">
+                <div class="p-1 flex-grow-1 d-flex">
+                    <div class="px-1 flex-grow-1">
+                        <h4>@slot.Name</h4>
+                    </div>
+                    @if (slot.HasStrain)
+                    {
+                        <div class="px-1 wt-st-input">
+                            <div class="input-group">
+                                <input type="number" class="form-control" id="strain-@slot.Id" @bind-value="slot.CurrentStrain" />
+                                <span class="input-group-text" id="strain-addon-@slot.Id">/@slot.StrainThreshold ST</span>
+                            </div>
+                        </div>
+                    }
+                    <div class="px-1 wt-st-input">
+                        <div class="input-group">
+                            <input type="number" class="form-control" id="wounds-@slot.Id" @bind-value="slot.CurrentWounds" />
+                            <span class="input-group-text" id="wounds-addon-@slot.Id">/@slot.WoundThreshold WT</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="p-1 align-self-center">
+                    <button type="button" class="btn btn-secondary" @onclick="@(e => RemoveSlot(slot.Id))"><i class="bi bi-x-lg"></i></button>
+                </div>
+            </li>
+        }
+    }
+    <li class="list-group-item align-items-center d-flex">
+        <div class="p-1 flex-grow-1 d-flex">
+            <div class="px-1">
+                <input type="text" class="form-control" id="name" @bind-value="name" placeholder="Enter name..."/>
+            </div>
+            <div class="px-1 wt-st-input">
+                <label class="visually-hidden" for="woundThreshold">Wound Threshold</label>
+                <div class="input-group">
+                    <div class="input-group-text">
+                        <span>WT</span>
+                    </div>
+                    <input type="number" class="form-control" id="woundThreshold" @bind-value="woundThreshold" />
+                </div>
+            </div>
+            <div class="px-1 wt-st-input">
+                <label class="visually-hidden" for="strainThreshold">Strain Threshold</label>
+                <div class="input-group">
+                    <div class="input-group-text">
+                        <span>ST</span>
+                    </div>
+                    <input type="number" class="form-control" id="strainThreshold" @bind-value="strainThreshold" />
+                </div>
+            </div>
+            <div class="px-1 align-self-center">
+                <input type="checkbox" class="form-check-input" id="hasStrain" @bind-value="hasStrain" checked="@hasStrain"/>
+                <label for="hasStrain" class="form-check-label">Has Strain</label>
+            </div>
+        </div>
+        <div class="p-1">
+            <button type="button" class="btn btn-primary" @onclick="AddSlot"><i class="bi bi-plus-lg"></i></button>
+        </div>
+
+    </li>
+</ul>
+
+<span class="text-danger">@errorMessage</span>
+
+@code {
+    private List<WoundStrainSlot> slots;
+    private int woundThreshold;
+    private int strainThreshold;
+    private bool hasStrain;
+    private string name;
+    private string errorMessage;
+
+    protected override async Task OnInitializedAsync()
+    {
+        ClearSlots();
+    }
+
+    public async Task PopulateAdversary(string adversaryName, int wounds, int strain, bool isNemesis)
+    {
+        name = adversaryName;
+        woundThreshold = wounds;
+        strainThreshold = strain;
+        hasStrain = isNemesis;
+        this.StateHasChanged();
+    }
+
+    private void AddSlot()
+    {
+        if (woundThreshold < 0 || strainThreshold < 0)
+        {
+            errorMessage = "Wound/Strain thresholds cannot be negative!";
+        }
+        else
+        {
+            errorMessage = String.Empty;
+            var slot = new WoundStrainSlot
+                {
+                    Name = name,
+                    CurrentWounds = 0,
+                    CurrentStrain = 0,
+                    WoundThreshold = woundThreshold,
+                    StrainThreshold = strainThreshold,
+                    HasStrain = hasStrain
+                };
+
+            slots = slots.Append(slot).ToList();
+        }
+    }
+
+    private void RemoveSlot(Guid id)
+    {
+        slots.RemoveAll(x => x.Id == id);
+    }
+
+    private void ClearSlots()
+    {
+        slots = new();
+        woundThreshold = 0;
+        strainThreshold = 0;
+        name = string.Empty;
+        errorMessage = string.Empty;
+        hasStrain = false;
+    }
+
+    private class WoundStrainSlot
+    {
+        public Guid Id { get; set; }
+        public string Name { get; set; }
+        public bool HasStrain { get; set; }
+        public int CurrentWounds { get; set; }
+        public int WoundThreshold { get; set; }
+        public int CurrentStrain { get; set; }
+        public int StrainThreshold { get; set; }
+
+        public WoundStrainSlot()
+        {
+            Id = Guid.NewGuid();
+            Name = string.Empty;
+        }
+    }
+}

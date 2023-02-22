@@ -8,6 +8,7 @@
         {
             <li class="list-group-item p-0">
                 <div class="d-flex w-100 justify-content-between border-bottom border-2 bg-danger text-white">
+                    <button type="button" class="btn btn-outline" @onclick="() => PopulateWoundsStrain(adversary.Name, adversary.Derived.Wounds, adversary.Derived.Strain ?? 0, adversary.Type.ToLowerInvariant())"><i class="bi bi-plus-lg"></i></button>
                     <h5 class="mb-1 p-2 fw-bolder align-self-center">@adversary.Name</h5>
                     <div class="d-flex p-2">
                         @switch (adversary.Type.ToLowerInvariant())
@@ -106,8 +107,15 @@
     [Parameter]
     public List<Adversary> Adversaries { get; set; }
 
+    public WoundsStrain WoundsStrain { get; set; }
+
     public void Refresh()
     {
         StateHasChanged();
+    }
+
+    private async void PopulateWoundsStrain(string name, int wounds, int strain, string adversaryType)
+    {
+        await WoundsStrain.PopulateAdversary(name, wounds, strain, adversaryType == "nemesis");
     }
 }

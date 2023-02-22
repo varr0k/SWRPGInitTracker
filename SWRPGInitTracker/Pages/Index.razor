@@ -56,7 +56,12 @@ else
 
     <div class="row">
         <div class="col-lg-6 col-xl-6 col-xxl-6 pb-4">
-            <Initiative></Initiative>
+            <div class="row mb-4">
+                <Initiative></Initiative>
+            </div>
+            <div class="row">
+                <WoundsStrain @ref="_woundsStrain"></WoundsStrain>
+            </div>
         </div>
         <div class="col-lg-6 col-xl-6 col-xxl-6">
             <ul class="nav nav-pills nav-fill mb-3" id="pills-tab" role="tablist">
@@ -133,7 +138,7 @@ else
     public bool ShowBackdrop = false;
 
 
-
+    private WoundsStrain _woundsStrain;
     private AdversaryList _adversaryList;
     private CritList _critList;
 
@@ -146,6 +151,8 @@ else
         critSources = Sources.GetCritsList();
 
         await UpdateData();
+
+        _adversaryList.WoundsStrain = _woundsStrain;
     }
 
     private async Task UpdateData()
