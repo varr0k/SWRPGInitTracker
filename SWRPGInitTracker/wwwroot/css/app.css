@@ -312,3 +312,7 @@ a, .btn-link {
 .smallcaps {
     font-variant-caps: small-caps;
 }
+
+.wt-st-input {
+    max-width: 25%;
+}
