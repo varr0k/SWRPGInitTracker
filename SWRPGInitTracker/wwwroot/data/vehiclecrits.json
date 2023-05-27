@@ -1,0 +1,135 @@
+[
+  {
+    "index": 0,
+    "roll": "01-09",
+    "severity": 1,
+    "name": "Mechanical Stress",
+    "effect": "The ship or vehicle suffers 1 point of system strain."
+  },
+  {
+    "index": 1,
+    "roll": "10-18",
+    "severity": 1,
+    "name": "Jostled",
+    "effect": "A small explosion or impact rocks the vehicle. All crew members suffer 1 strain and are disoriented for one round."
+  },
+  {
+    "index": 2,
+    "roll": "19-27",
+    "severity": 1,
+    "name": "Losing Power to Shields",
+    "effect": "Decrease defense in affected defense zone by 1 until the Critical Hit is repaired. If the ship or vehicle has no defense, suffer 1 point of system strain."
+  },
+  {
+    "index": 3,
+    "roll": "28-36",
+    "severity": 1,
+    "name": "Knocked Off Course",
+    "effect": "A particularly strong blast or impact sends the ship or vehicle careening off in a new direction. On his next turn, the pilot cannot execute any maneuvers and must make a Piloting check to regain control. The difficulty of this check depends on his current speed."
+  },
+  {
+    "index": 4,
+    "roll": "37-45",
+    "severity": 1,
+    "name": "Tailspin",
+    "effect": "All firing from the ship or vehicle suffers :setback: :setback: until the end of the pilot's next turn. All crewmembers are immobilized until the end of the pilot's next turn."
+  },
+  {
+    "index": 5,
+    "roll": "46-54",
+    "severity": 1,
+    "name": "Component Hit",
+    "effect": "One component of the attacker's choice is knocked offline and is rendered inoperable until the end of the following round."
+  },
+  {
+    "index": 6,
+    "roll": "55-63",
+    "severity": 2,
+    "name": "Shields Failing",
+    "effect": "Reduce defense in all defense zones by 1 point until the Critical Hit is repaired. If the ship or vehicle has no defense, suffer 2 points of system strain."
+  },
+  {
+    "index": 7,
+    "roll": "64-72",
+    "severity": 2,
+    "name": "Navicomputer Failure",
+    "effect": "The navicomputer (or in the case of a ship without a navicomputer. its R2 unit) fails, and the ship cannot make the jump to hyperspace until the Critical Hit is repaired. If the ship or vehicle is without a hyperdrive. the vehicle or ship's navigation systems fail, leaving it flying or driving blind, unable to tell where it is or where it's going."
+  },
+  {
+    "index": 8,
+    "roll": "73-81",
+    "severity": 2,
+    "name": "Power Fluctuations",
+    "effect": "The ship or vehicle is beset by random power surges and outages The pilot cannot voluntarily inflict system strain on the ship (to gain an extra starship maneuver, for example) until this Critical Hit is repaired."
+  },
+  {
+    "index": 9,
+    "roll": "82-90",
+    "severity": 3,
+    "name": "Shields Down",
+    "effect": "Decrease defense in affected defense zone to 0, and decrease defense in all other defense zones by 1 until this Critical Hit is repaired. While the defense of the affected defense zone cannot be restored until the Critical Hit is repaired, defense from other zones can be assigned to protect that defense zone as usual. If the ship or vehicle is without defense, suffer 4 points of system strain."
+  },
+  {
+    "index": 10,
+    "roll": "91-99",
+    "severity": 3,
+    "name": "Engine Damaged",
+    "effect": "The ship or vehicle's maximum speed is reduced by 1 point, to a minimum of 1, until the Critical Hit is repaired."
+  },
+  {
+    "index": 11,
+    "roll": "100-108",
+    "severity": 3,
+    "name": "Shield Overload",
+    "effect": "The ship's shields completely fail. Decrease the defense of all defense zones to 0. This Critical Hit cannot be repaired until the end of the encounter, and the ship suffers 2 points of system strain. If the ship or vehicle is without defense, reduce armor by 1 until the Critical Hit is repaired."
+  },
+  {
+    "index": 12,
+    "roll": "109-117",
+    "severity": 3,
+    "name": "Engines Down",
+    "effect": "The ship or vehicle's maximum speed is reduced to 0 until the Critical Hit is repaired, although it continues on its present course thanks to momentum. In addition, the ship cannot execute any maneuvers until the Critical Hit is repaired."
+  },
+  {
+    "index": 13,
+    "roll": "118-126",
+    "severity": 3,
+    "name": "Major System Failure",
+    "effect": "One component of the attacker's choice is heavily damaged and is inoperable until the Critical Hit is repaired."
+  },
+  {
+    "index": 14,
+    "roll": "127-133",
+    "severity": 4,
+    "name": "Major Hull Breach",
+    "effect": "A huge, gaping tear is torn in the ship's hull, and the ship depressurizes. For ships and vehicles of silhouette 4 and smaller, the entire ship depressurizes in a number of rounds equal to the ship's silhouette. For ships and vehicles of silhouette 5 and larger, sections of the ship depressurize in a number of rounds equal to the vehicle's silhouette). Vehicles and ships operating in an atmosphere can better handle this Critical Hit. However, the huge tear still inflicts penalties, causing the vehicle to suffer the Destabilized Critical Hit instead."
+  },
+  {
+    "index": 15,
+    "roll": "134-138",
+    "severity": 4,
+    "name": "Destabilized",
+    "effect": "The ship or vehicle's structural integrity is seriously damaged. Reduce the ship or vehicle's hull trauma threshold and system strain threshold to half their original values until repaired."
+  },
+  {
+    "index": 16,
+    "roll": "139-144",
+    "severity": 4,
+    "name": "Fire!",
+    "effect": "Fire rages through the ship. The ship or vehicle immediately takes 2 points of system strain, andanyone caught in the fire takes damage. A fire can be put out with some quick thinking and appropriate skill or Vigilance and/or Cool checks at the Game Master's discretion. Once going, a fire takes one round per 2 of the ship's silhouette points to put out."
+  },
+  {
+    "index": 17,
+    "roll": "145-153",
+    "severity": 2,
+    "name": "Breaking Up",
+    "effect": "The vehicle or ship has suffered so much damage that it begins to come apart at its seams, breaking up and disintegrating around the crew. At the end of the following round, the ship is completely destroyed, and the surrounding environment is littered with debris. Anyone aboard the ship or vehicle has one round to get to an escape pod. bail out. or dive for the nearest hatch before they are lost."
+  },
+  {
+    "index": 18,
+    "roll": "154+",
+    "severity": -1,
+    "name": "Vaporized",
+    "effect": "The ship or vehicle is completely destroyed, consumed in a particularly large and dramatic fireball. Nothing survives."
+  }
+]

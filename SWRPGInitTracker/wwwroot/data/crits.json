@@ -11,7 +11,7 @@
 		"roll": "06-10",
 		"severity": 1,
 		"name": "Slowed Down",
-		"effect": "Target can only act in the last allied initiative slot on their next turn/"
+		"effect": "Target can only act in the last allied initiative slot on their next turn."
 	},
 	{
 		"index": 2,
@@ -123,7 +123,7 @@
 		"roll": "86-90",
 		"severity": 2,
 		"name": "Compromised",
-		"effect": "Increasee the difficulty of all skill checks by one until the end of the encounter."
+		"effect": "Increase the difficulty of all skill checks by one until the end of the encounter."
 	},
 	{
 		"index": 18,
