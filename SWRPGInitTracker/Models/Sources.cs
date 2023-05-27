@@ -20,6 +20,12 @@
             {
                 new Source("crits", "/data/crits.json", true)
             };
+
+        public static List<Source> GetVehicleCritsList() =>
+            new List<Source>
+            {
+                new Source("crits", "/data/vehiclecrits.json", true)
+            };
     }
 
     public class Source

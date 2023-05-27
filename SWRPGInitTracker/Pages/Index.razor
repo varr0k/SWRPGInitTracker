@@ -71,9 +71,9 @@ else
                 <li class="nav-item" role="presentation">
                     <button class="nav-link" id="pills-crits-tab" data-bs-toggle="pill" data-bs-target="#pills-crits" type="button" role="tab" aria-controls="pills-crits" aria-selected="false">Critical Hits</button>
                 </li>
-                @*<li class="nav-item" role="presentation">
-                    <button class="nav-link" id="pills-contact-tab" data-bs-toggle="pill" data-bs-target="#pills-contact" type="button" role="tab" aria-controls="pills-contact" aria-selected="false">Contact</button>
-                </li>*@
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link" id="pills-vehiclecrits-tab" data-bs-toggle="pill" data-bs-target="#pills-vehiclecrits" type="button" role="tab" aria-controls="pills-vehiclecrits" aria-selected="false">Vehicle Crits</button>
+                </li>
             </ul>
             <div class="tab-content" id="pills-tabContent">
                 <div class="tab-pane fade show active" id="pills-adversary" role="tabpanel" aria-labelledby="pills-adversary-tab">
@@ -104,7 +104,10 @@ else
                     <h2>Critical Hits</h2>
                     <CritList Crits="crits" @ref="_critList"></CritList>
                 </div>
-                @*<div class="tab-pane fade" id="pills-contact" role="tabpanel" aria-labelledby="pills-contact-tab">...</div>*@
+                <div class="tab-pane fade" id="pills-vehiclecrits" role="tabpanel" aria-labelledby="pills-crits-tab">
+                    <h2>Vehicle Crits</h2>
+                    <CritList Crits="vehicleCrits" @ref="_vehicleCritList"></CritList>
+                </div>
             </div>
 
             
@@ -124,10 +127,12 @@ else
 @code {
     private string content;
     private List<Crit> crits;
+    private List<Crit> vehicleCrits;
     private List<Adversary> adversaries;
     private List<Adversary> filteredList;
     private List<Source> adversarySources;
     private List<Source> critSources;
+    private List<Source> vehicleCritSources;
     private string exception = String.Empty;
     private string inputVal = String.Empty;
     private int loaded;
@@ -141,6 +146,7 @@ else
     private WoundsStrain _woundsStrain;
     private AdversaryList _adversaryList;
     private CritList _critList;
+    private CritList _vehicleCritList;
 
     protected override async Task OnInitializedAsync()
     {
@@ -149,6 +155,9 @@ else
 
         crits = new();
         critSources = Sources.GetCritsList();
+
+        vehicleCrits = new();
+        vehicleCritSources = Sources.GetVehicleCritsList();
 
         await UpdateData();
 
@@ -169,7 +178,13 @@ else
         crits.Clear();
         foreach (var source in critSources.Where(x => x.Selected).ToList())
         {
-            await ImportCrit(source.Url);
+            await ImportCrit(source.Url, false);
+        }
+
+        vehicleCrits.Clear();
+        foreach (var source in vehicleCritSources.Where(x => x.Selected).ToList())
+        {
+            await ImportCrit(source.Url, true);
         }
     }
 
@@ -197,7 +212,7 @@ else
         }
     }
 
-    private async Task ImportCrit(string url)
+    private async Task ImportCrit(string url, bool isVehicleList)
     {
         content = await Http.GetStringAsync(url);
         if (!String.IsNullOrEmpty(content))
@@ -211,7 +226,13 @@ else
                 var importList = JsonSerializer.Deserialize<List<Crit>>(content);
                 if (importList != null && importList.Any())
                 {
-                    crits.AddRange(importList);
+                    if (isVehicleList)
+                    {
+                        vehicleCrits.AddRange(importList);
+                    }
+                    else {
+                        crits.AddRange(importList);
+                    } 
                 }
             }
             catch (Exception ex)
